@@ -1,4 +1,4 @@
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 
 from goods.models import Products
 from django.db.models import Q
@@ -12,10 +12,25 @@ def q_search(query):
 
     query = SearchQuery(query)
 
+    result = (
+        Products.objects.annotate(rank=SearchRank(vector, query))
+        .filter(rank__gt=0)
+        .order_by("-rank")
+    )
 
-
-    return Products.objects.annotate(rank=SearchRank(vector,query)).order_by("-rank")
-
+    result = result.annotate(
+        hedaline=SearchHeadline(
+            "name",
+            query,
+        )
+    )
+    result = result.annotate(
+        bodyline=SearchHeadline(
+            "description",
+            query,
+        )
+    )
+    return result
 
     # keywords = [word for word in query.split() if len(word) > 2]
     #
