@@ -26,7 +26,7 @@
     <header>
         <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div class="container">
-                <a class="navbar-brand" href="{% url "main:index" %}">Home</a>
+                <a class="navbar-brand" href="{% url 'main:index' %}">Home</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -42,31 +42,37 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item  text-white" href="#">Shiping and payment</a></li>
                                 <li><a class="dropdown-item  text-white" href="#">Contanct information</a></li>
-                                <li><a class="dropdown-item  text-white" href="{% url "main:about" %}">About as</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url 'main:about' %}">About as</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link  text-white" href="carts/cart.html">Basket</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link  text-white" href="{% url 'user:login' %}">Log in</a>
-                        </li>
-                        <li class="nav-item dropdown ">
-                            <a class="nav-link dropdown-toggle text-white" href="#" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                My profile
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item  text-white" href="carts/cart.html">Basket</a></li>
-                                <li><a class="dropdown-item  text-white" href="{% url 'user:profile' %}">Personal area</a>
-                                </li>
-                                <li><a class="dropdown-item  text-white" href="{% url 'admin:index' %}">Admin panel</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item  text-white" href="{% url 'user:logout' %}">Log out</a></li>
-                            </ul>
-                        </li>
+
+                        {% if not user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link  text-white" href="{% url 'user:login' %}">Log in</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    My profile
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item  text-white" href="carts/cart.html">Basket</a></li>
+                                    <li><a class="dropdown-item  text-white" href="{% url 'user:profile' %}">Personal area</a>
+                                    </li>
+                                    {% if user.is_admin or user.is_staff %}
+                                        <li><a class="dropdown-item  text-white" href="{% url 'admin:index' %}">Admin panel</a></li>
+                                    {% endif %}
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item  text-white" href="{% url 'user:logout' %}">Log out</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
                     </ul>
                     <form class="d-flex" role="search" action="{% url 'catalog:search' %}" method='get'>
                         <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">

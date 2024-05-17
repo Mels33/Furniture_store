@@ -15,8 +15,12 @@ def catalog(request, category_slug=None) -> HttpResponse:
 
     query = request.GET.get('q', None)
 
+
     if category_slug == "all-products":
         goods = Products.objects.all()
+
+    elif category_slug != "all-products":
+        goods = Products.objects.all().filter(category__slug=category_slug)
 
     elif query:
         goods = q_search(query)
